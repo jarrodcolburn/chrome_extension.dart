@@ -233,9 +233,15 @@ class DartApiGenerator extends _GeneratorBase {
             ..lambda = true
             ..body = Code('_${api.name.lowerCamel}')
             ..type = MethodType.getter))),
-        Class((b) => b
+        ExtensionType((b) => b
+          ..representationDeclaration = RepresentationDeclaration((r) {
+            r
+              ..declaredRepresentationType = refer('JSObject')
+              ..name = '_';
+          })
+          ..implements.add(refer('JSObject'))
           ..name = mainClassName
-          ..constructors.add(Constructor((c) => c.name = '_'))
+          ..primaryConstructorName = '_'
           ..methods.add(_isAvailableGetter())
           ..methods.addAll(
               api.functions.map((f) => _function(f, source: _referJsBinding())))
