@@ -242,7 +242,7 @@ class DartApiGenerator extends _GeneratorBase {
           ..implements.add(refer('JSObject'))
           ..name = mainClassName
           ..primaryConstructorName = '_'
-          ..methods.add(_isAvailableGetter())
+          // ..methods.add(_isAvailableGetter())
           ..methods.addAll(
               api.functions.map((f) => _function(f, source: _referJsBinding())))
           ..methods.addAll(api.properties.map(_property))
