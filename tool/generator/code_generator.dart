@@ -242,9 +242,8 @@ class DartApiGenerator extends _GeneratorBase {
           ..implements.add(refer('JSObject'))
           ..name = mainClassName
           ..primaryConstructorName = '_'
-          // ..methods.add(_isAvailableGetter())
-          ..methods.addAll(
-              api.functions.map((f) => _function(f, source: _referJsBinding())))
+          ..methods.addAll(api.functions.map((f) =>
+              _function(f, source: _referJsBinding(), isExternalBody: true)))
           ..methods.addAll(api.properties.map(_property))
           ..methods.addAll(
               api.events.map((e) => _event(e, source: _referJsBinding())))),
@@ -297,7 +296,8 @@ class DartApiGenerator extends _GeneratorBase {
     return referTo.property(api.nameWithoutGroup.lowerCamel);
   }
 
-  Method _function(model.Method method, {required Expression source}) {
+  Method _function(model.Method method,
+      {required Expression source, bool isExternalBody = false}) {
     Reference returns;
     Code body;
     MethodModifier? methodModifier;
@@ -362,7 +362,8 @@ class DartApiGenerator extends _GeneratorBase {
       ..name = method.name
       ..returns = returns
       ..modifier = methodModifier
-      ..body = body
+      ..body = isExternalBody ? null : body
+      ..external = isExternalBody
       ..requiredParameters.addAll(requiredParameters)
       ..optionalParameters.addAll(optionalParameters));
   }
@@ -476,15 +477,12 @@ class DartApiGenerator extends _GeneratorBase {
   }
 
   Method _property(model.Property prop) {
-    var referTo = _referJsBinding().property(prop.rawName);
-
     return Method((b) => b
       ..name = prop.dartName
       ..returns = prop.type.dartType
       ..docs.add(documentationComment(prop.documentation, indent: 2))
       ..type = MethodType.getter
-      ..body = prop.type.toDart(referTo).code
-      ..lambda = true);
+      ..external = true);
   }
 
   Enum _enum(model.Enumeration enumeration) {
